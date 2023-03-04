@@ -2,6 +2,16 @@ import "./styles/Entries.css";
 
 import { useEffect, useRef } from "react";
 
+function getEntrySizelabel({ entry, util }) {
+  if (entry.data) {
+    const { size } = entry.data;
+    const uncompressedSize = size || entry.data.uncompressedSize;
+    if (uncompressedSize !== undefined) {
+      return util.formatSize(uncompressedSize);
+    }
+  }
+}
+
 function Entries({
   entries,
   selectedFolder,
@@ -107,6 +117,7 @@ function Entry({
         util={util}
         messages={messages}
       />
+      <EntrySize entry={entry} util={util} />
       <EntryButton
         entry={entry}
         selectedFolder={selectedFolder}
@@ -137,21 +148,21 @@ function EntryName({
   function getEntryNameTitle() {
     const tooltip = [entryIsParentFolder ? PARENT_FOLDER_TOOLTIP : entry.name];
     if (entry.data) {
-      const { compressedSize, lastModified, lastModDate, size } = entry.data;
-      const uncompressedSize = size || entry.data.uncompressedSize;
+      const { compressedSize, lastModified, lastModDate } = entry.data;
+      const uncompressedSizeLabel = getEntrySizelabel({ entry, util });
       tooltip.push(
         LAST_MOD_DATE_LABEL +
           util.formatDate(
             lastModified === undefined ? lastModDate : new Date(lastModified)
           )
       );
-      if (uncompressedSize && compressedSize) {
+      if (uncompressedSizeLabel && compressedSize) {
         tooltip.push(COMPRESSED_SIZE_LABEL + util.formatSize(compressedSize));
       }
-      if (uncompressedSize) {
+      if (uncompressedSizeLabel) {
         tooltip.push(
           (compressedSize ? UNCOMPRESSED_SIZE_LABEL : SIZE_LABEL) +
-            util.formatSize(uncompressedSize)
+            uncompressedSizeLabel
         );
       }
     }
@@ -175,6 +186,12 @@ function EntryName({
     >
       {entryIsParentFolder ? messages.PARENT_FOLDER_LABEL : entry.name}
     </span>
+  );
+}
+
+function EntrySize({ entry, util }) {
+  return (
+    <span className="entry-size">{getEntrySizelabel({ entry, util })}</span>
   );
 }
 

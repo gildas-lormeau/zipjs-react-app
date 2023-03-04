@@ -4,19 +4,25 @@
   padding-block-end: 8px;
 }
 
+.entries ol {
+  display: grid;
+  grid-template-columns: auto min-content min-content;
+  grid-template-rows: repeat(auto);
+  column-gap: 8px;
+}
+
 .entries li {
-  display: flex;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / 4;
   padding: 4px;
   user-select: none;
-}
-
-.entries li > * {
-  margin-inline: 2px;
-}
-
-.entries .entry-name {
-  flex: 1;
   cursor: pointer;
+}
+
+.entries .entry-size {
+  text-align: right;
+  white-space: nowrap;
 }
 
 .entries .entry-highlighted {
